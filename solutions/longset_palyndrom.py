@@ -1,49 +1,26 @@
 class Solution:
     def longestPalindrome(self, s: str) -> str:
-        reversed_s = s[::-1]
-        max_substring = self.longestCommonSubstring(s, reversed_s)
+        max_length, length = 0, len(s)
+        start_pos, end_pos = 0, 0
+        for cur_pos in range(length):
+            len1 = self.expandAroundCenter(s, cur_pos, cur_pos)
+            len2 = self.expandAroundCenter(s, cur_pos, cur_pos + 1)
+            cur_length = max(len1, len2)
+            if cur_length > max_length:
+                max_length = cur_length
+                start_pos = cur_pos - (cur_length - 1) // 2
+                end_pos = cur_pos + cur_length // 2
 
-        return max_substring
+        return s[start_pos:end_pos + 1]
 
-    def longestCommonSubstring(self, s1: str, s2: str) -> str:
-        n = len(s1)
-        m = len(s2)
-
-        lc_suff = [[0 for _ in range(n + 1)] for _ in range(m + 1)]
-
-        max_length = 0
-
-        row = 0
-        col = 0
-        for i in range(m + 1):
-            for j in range(n + 1):
-                if i == 0 or j == 0:
-                    lc_suff[i][j] = 0
-                elif s1[i - 1] == s2[j - 1]:
-                    lc_suff[i][j] = lc_suff[i - 1][j - 1] + 1
-                    if max_length < lc_suff[i][j]:
-                        max_length = lc_suff[i][j]
-                        row = i
-                        col = j
-                else:
-                    lc_suff[i][j] = 0
-
-        result = [None] * max_length
-        while lc_suff[row][col] > 0:
-            result_index = lc_suff[row][col] - 1
-            result[result_index] = s1[row - 1]
-            col -= 1
-            row -= 1
-        return "".join(result)
-
-def isPalindrome(self, s: str) -> bool:
-        len_s = len(s)
-        index = 0
-        while index < len_s / 2:
-            if s[index] != s[len_s - index - 1]:
-                return False
-            index += 1
-        return True
+    def expandAroundCenter(self, s: str, left: int, right: int) -> int:
+        length, res = len(s), 0
+        res = 0
+        while left >= 0 and right < length and s[left] == s[right]:
+            left -= 1
+            right += 1
+            res += 1
+        return right - left - 1
 
 
 def main():
