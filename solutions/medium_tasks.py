@@ -61,12 +61,56 @@ class Solution:
         backtrack("", n * 2, 0, 0, solution)
         return solution
 
+    def divide(self, dividend: int, divisor: int) -> int:
+        if dividend == 0:
+            return 0
+        sign = (dividend > 0 and divisor > 0) or (dividend < 0 and divisor < 0)
+        dividend = abs(dividend)
+        divisor = abs(divisor)
+        if dividend < dividend:
+            return 0
+        res, str_dvid, residue = "", str(dividend), 0
+        for idx in range(len(str_dvid)):
+            quotient, residue = self.divide_two(int(str(residue) + str_dvid[idx]), divisor)
+            res += str(quotient)
+        int_res = int(res) if sign else -int(res)
+        if int_res > 2 ** 31 - 1 or int_res < - 2** 31:
+            return 2 ** 31 - 1
+        return int_res
+
+
+    def divide_two(self, first: int, second: int) -> tuple:
+        copy_first, quotient, sum = first, 0, 0
+        while first >= second:
+            first -= second
+            quotient += 1
+            sum += second
+        return quotient, copy_first - sum
+
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(cur_list: List[int], remains: List[int]):
+            if len(remains) == 0:
+                res.append(cur_list)
+            else:
+                for idx in range(len(remains)):
+                    copy = remains[:]
+                    new_list = cur_list[:]
+                    new_list.append(copy[idx])
+                    del copy[idx]
+                    backtrack(new_list, copy)
+
+        res = []
+        backtrack([], nums)
+        return res
 
 
 
 def main():
-    res = Solution().generateParenthesis(2)
-    print(res)
+    sol = Solution()
+
+    nums = [1, 2, 3]
+    print(sol.permute(nums))
+
 
 
 if __name__ == '__main__':
