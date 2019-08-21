@@ -1,3 +1,4 @@
+import sys
 from typing import List
 
 
@@ -62,30 +63,41 @@ class Solution:
         return solution
 
     def divide(self, dividend: int, divisor: int) -> int:
-        if dividend == 0:
-            return 0
         sign = (dividend > 0 and divisor > 0) or (dividend < 0 and divisor < 0)
-        dividend = abs(dividend)
-        divisor = abs(divisor)
-        if dividend < dividend:
+        dividend, divisor = abs(dividend), abs(divisor)
+        if dividend < divisor:
             return 0
-        res, str_dvid, residue = "", str(dividend), 0
-        for idx in range(len(str_dvid)):
-            quotient, residue = self.divide_two(int(str(residue) + str_dvid[idx]), divisor)
-            res += str(quotient)
-        int_res = int(res) if sign else -int(res)
-        if int_res > 2 ** 31 - 1 or int_res < - 2** 31:
-            return 2 ** 31 - 1
-        return int_res
+        result = 0
+        while dividend >= divisor:
+            koef, new_divisor = 1, divisor
+            while dividend >= new_divisor:
+                dividend -= new_divisor
+                result += koef
+                new_divisor += new_divisor
+                koef +=koef
+        if not sign:
+            result = -result
+        if (result >= 2**31) or (result < -2**31):
+            return 2**31 - 1
+        return result
 
-
-    def divide_two(self, first: int, second: int) -> tuple:
-        copy_first, quotient, sum = first, 0, 0
-        while first >= second:
-            first -= second
-            quotient += 1
-            sum += second
-        return quotient, copy_first - sum
+    def multiply(self, num1: str, num2: str) -> str:
+        if num1 == "0" or num2 == "0":
+            return "0"
+        n1, n2 = len(num1), len(num2)
+        res = [0] * (n1 + n2)
+        for i in reversed(range(n1)):
+            for j in reversed(range(n2)):
+                idx = i + j;
+                total = res[idx + 1] + int(num1[i]) * int(num2[j])
+                res[idx + 1] = total % 10
+                res[idx] += total // 10
+        result = ""
+        for digit in res:
+            if not result and digit == 0:
+                continue
+            result += str(digit)
+        return result
 
     def permute(self, nums: List[int]) -> List[List[int]]:
         def backtrack(cur_list: List[int], remains: List[int]):
@@ -93,24 +105,53 @@ class Solution:
                 res.append(cur_list)
             else:
                 for idx in range(len(remains)):
+                    if idx > 0 and remains[idx] == remains[idx - 1]:
+                        continue
                     copy = remains[:]
                     new_list = cur_list[:]
                     new_list.append(copy[idx])
                     del copy[idx]
                     backtrack(new_list, copy)
 
-        res = []
-        backtrack([], nums)
+        res = list()
+        backtrack([], sorted(nums))
         return res
+
+    def nextPermutation(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        def find_min_greater(nums: List[int], value: int, value_pos: int) -> int:
+            min_greater, pos = sys.maxsize, None
+            for idx in range(value_pos + 1, len(nums)):
+                if value < nums[idx] < min_greater:
+                    min_greater = nums[idx]
+                    pos = idx
+            return pos
+
+        pos = None
+        for idx in range(len(nums) - 1, -1, -1):
+            pos = find_min_greater(nums, nums[idx], idx)
+            if pos:
+                buf = nums[idx]
+                nums[idx] = nums[pos]
+                nums[pos] = buf
+                pos = idx
+                break
+
+        if pos is not None:
+            nums[pos + 1:len(nums)] = sorted(nums[pos+1:len(nums)])
+        else:
+            nums.sort()
+
+
 
 
 
 def main():
     sol = Solution()
 
-    nums = [1, 2, 3]
-    print(sol.permute(nums))
-
+    print(sol.divide(-2147483648, 1))
 
 
 if __name__ == '__main__':
