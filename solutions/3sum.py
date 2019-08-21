@@ -1,3 +1,4 @@
+import sys
 from typing import List, Tuple
 
 
@@ -43,11 +44,41 @@ class Solution:
                 l += 1
         return res
 
+    def threeSumClosest(self, nums: List[int], target: int) -> int:
+        if not nums or len(nums) < 3:
+            return []
+        nums.sort()
+        closest_sum = None
+        cur_diff, min_diff = None, sys.maxsize
+        for idx in range(len(nums) - 2):
+            cur_closest_sum = self.twoSumClosest(nums, target - nums[idx], idx) + nums[idx]
+            cur_diff = abs(target - cur_closest_sum)
+            if cur_diff < min_diff:
+                min_diff = cur_diff
+                closest_sum = cur_closest_sum
+
+        return closest_sum
+
+    def twoSumClosest(self, nums: List[int], target: int, idx: int) -> int:
+        l = idx + 1
+        r = len(nums) - 1
+        closest_sum = sys.maxsize
+        sum = nums[l] + nums[r]
+        while l < r:
+            diff = abs(nums[l] + nums[r] - target)
+            if diff < closest_sum:
+                closest_sum = diff
+                sum = nums[l] + nums[r]
+            if nums[l] + nums[r] > target:
+                r -= 1
+            else:
+                l += 1
+        return sum
 
 
 def main():
-    nums = []
-    print(Solution().threeSum(nums))
+    nums = [0,-4,1,-5]
+    print(Solution().threeSumClosest(nums, 0))
 
 
 if __name__ == "__main__":
