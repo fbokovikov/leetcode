@@ -1,3 +1,4 @@
+import functools
 import sys
 
 print("qwerty"[1:])
@@ -22,3 +23,17 @@ print(-2147483648)
 
 result = -2147483648
 print(result < -2**31)
+
+res = []
+ar = [[-1, 1, 2], [0, 0, 2]]
+res.extend([[-2] + v for v in ar])
+print(res)
+
+ar = [1, 2, 3, 4, 5]
+
+print(list(filter(
+    lambda x: x % 2 == 0,
+    map(lambda x: x * 10, ar)
+)))
+
+print(functools.reduce((lambda x, y: x + y), ar))
