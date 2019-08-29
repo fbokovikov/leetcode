@@ -37,3 +37,7 @@ print(list(filter(
 )))
 
 print(functools.reduce((lambda x, y: x + y), ar))
+
+
+ar = [1, 3, 5, 7, 9]
+print(list(zip(ar)))
