@@ -41,3 +41,8 @@ print(functools.reduce((lambda x, y: x + y), ar))
 
 ar = [1, 3, 5, 7, 9]
 print(list(zip(ar)))
+
+print(ar[-1])
+
+for j in range(2, 3):
+    print(j)

@@ -1,0 +1,150 @@
+from queue import Queue
+from typing import List
+from collections import deque
+
+
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+
+class Solution:
+    def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        if p is None and q is None:
+            return True
+        if p is None and q is not None \
+                or p is not None and q is None \
+                or p.val != q.val:
+            return False
+        return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
+
+    def isBalanced(self, root: TreeNode) -> bool:
+        if root is None:
+            return True
+        else:
+            left_height = self.maxDepth(root.left)
+            right_height = self.maxDepth(root.right)
+            if abs(left_height - right_height) > 1:
+                return False
+            return self.isBalanced(root.left) and self.isBalanced(root.right)
+
+    def maxDepth(self, root: TreeNode) -> int:
+        if root is None:
+            return 0
+        if root.right is None and root.left is None:
+            return 1
+        else:
+            return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right))
+
+    def minDepth(self, root: TreeNode) -> int:
+        if root is None:
+            return 0
+        if root.left is None and root.right is None:
+            return 1
+        if root.left is not None and root.right is not None:
+            return 1 + min(self.minDepth(root.right), self.minDepth(root.left))
+        elif root.left:
+            return 1 + self.minDepth(root.left)
+        else:
+            return 1 + self.minDepth(root.right)
+
+    def isSymmetric(self, root: TreeNode) -> bool:
+        if root is None:
+            return True
+        return self.isSymmetricPair(root.left, root.right)
+
+    def isSymmetricPair(self, left_root: TreeNode, right_root: TreeNode):
+        if not (left_root or right_root):
+            return True
+        if not (left_root and right_root):
+            return False
+        if left_root.val != right_root.val:
+            return False
+        return self.isSymmetricPair(left_root.left, right_root.right) \
+               and self.isSymmetricPair(left_root.right, right_root.left)
+
+    def levelOrder(self, root: TreeNode) -> List[List[int]]:
+        if not root:
+            return []
+        nodes = deque()
+        nodes.append(root)
+        result = list()
+        level_nodes = list()
+        while nodes:
+            node = nodes.popleft()
+            level_nodes.append(node)
+            if not nodes and level_nodes:
+                result.append([n.val for n in level_nodes])
+                for level_node in level_nodes:
+                    if level_node.left:
+                        nodes.append(level_node.left)
+                    if level_node.right:
+                        nodes.append(level_node.right)
+                level_nodes.clear()
+        return result
+
+    def levelOrderBottom(self, root: TreeNode) -> List[List[int]]:
+        nodes = dict()
+        self.addNode(root, 1, nodes)
+        levels = nodes.keys()
+        result = []
+        for level in sorted(levels, reverse=True):
+            result.append(nodes[level])
+        return result
+
+    def addNode(self, node: TreeNode, level: int, nodes):
+        if node is None:
+            return
+        if level in nodes:
+            nodes[level].append(node.val)
+        else:
+            nodes[level] = [node.val]
+        self.addNode(node.left, level + 1, nodes)
+        self.addNode(node.right, level + 1, nodes)
+
+    def zigzagLevelOrder(self, root: TreeNode) -> List[List[int]]:
+        if root is None:
+            return []
+        res = []
+        nodes = deque()
+        nodes.append(root)
+        zigzag = False
+        while len(nodes) > 0:
+            cur_level = []
+            for idx in range(len(nodes)):
+                node = nodes.popleft()
+                cur_level.append(node.val)
+                if node.left:
+                    nodes.append(node.left)
+                if node.right:
+                    nodes.append(node.right)
+            if not zigzag:
+                res.append(cur_level)
+            else:
+                res.append(list(reversed(cur_level)))
+            zigzag = not zigzag
+        return res
+
+
+def main():
+    """
+        3
+       /\
+      -1 20
+     /\  \
+    -2 0   30
+    """
+    p = TreeNode(3)
+    p.left = TreeNode(-1)
+    p.right = TreeNode(20)
+    p.left.left = TreeNode(-2)
+    p.left.right = TreeNode(1000)
+    p.right.right = TreeNode(30)
+    sol = Solution()
+    print(sol.isValidBST(p))
+
+
+if __name__ == '__main__':
+    main()
