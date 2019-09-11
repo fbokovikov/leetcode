@@ -1,5 +1,5 @@
 from queue import Queue
-from typing import List
+from typing import List, Callable
 from collections import deque
 
 
@@ -127,6 +127,43 @@ class Solution:
             zigzag = not zigzag
         return res
 
+    def isValidBST(self, root: TreeNode) -> bool:
+        return self.is_valid_node(root, None, None)
+
+    def is_valid_node(self, node: TreeNode, lower_limit, upper_limit) -> bool:
+        if node is None:
+            return True
+        if lower_limit is not None and node.val <= lower_limit:
+            return False
+        if upper_limit is not None and node.val >= upper_limit:
+            return False
+        return self.is_valid_node(node.left, lower_limit, node.val) \
+            and self.is_valid_node(node.right, node.val, upper_limit)
+
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        def helper(node: TreeNode):
+            if node is None:
+                return
+            helper(node.left)
+            res.append(node.val)
+            helper(node.right)
+
+        res = []
+        helper(root)
+        return res
+
+    def inorderTraversalNonRecursive(self, root: TreeNode) -> List[int]:
+        res, nodes = list(), list()
+        cur = root
+        while cur is not None or len(nodes) > 0:
+            while cur is not None:
+                nodes.append(cur)
+                cur = cur.left
+            cur = nodes.pop()
+            res.append(cur.val)
+            cur = cur.right
+        return res
+
 
 def main():
     """
@@ -140,10 +177,10 @@ def main():
     p.left = TreeNode(-1)
     p.right = TreeNode(20)
     p.left.left = TreeNode(-2)
-    p.left.right = TreeNode(1000)
+    p.left.right = TreeNode(0)
     p.right.right = TreeNode(30)
     sol = Solution()
-    print(sol.isValidBST(p))
+    print(sol.inorderTraversalNonRecursive(p))
 
 
 if __name__ == '__main__':
