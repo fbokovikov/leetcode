@@ -164,6 +164,48 @@ class Solution:
             cur = cur.right
         return res
 
+    def hasPathSum(self, root: TreeNode, sum: int) -> bool:
+        if root is None:
+            return False
+        if root.val == sum and root.left is None and root.right is None:
+            return True
+        return self.hasPathSum(root.left, sum - root.val) or self.hasPathSum(root.right, sum - root.val)
+
+    def pathSum(self, root: TreeNode, sum: int) -> List[List[int]]:
+        def helper(node: TreeNode, sum: int, cur_path: List[int]):
+            if node is None:
+                return
+            cur_path.append(node.val)
+            if node.val == sum and node.left is None and node.right is None:
+                res.append(cur_path)
+            helper(node.left, sum - node.val, list(cur_path))
+            helper(node.right, sum - node.val, list(cur_path))
+        res = []
+        helper(root, sum, [])
+        return res
+
+    def pathSum3(self, root: TreeNode, sum: int) -> int:
+        def helper(node: TreeNode, sum: int):
+            if node is None:
+                return
+            if node.val == sum:
+                res[0] += 1
+            helper(node.left, sum - node.val)
+            helper(node.right, sum - node.val)
+
+        def helper2(node: TreeNode, sum: int):
+            if node is None:
+                return
+            helper(node, sum)
+            helper2(node.left, sum)
+            helper2(node.right, sum)
+        res = [0]
+        helper2(root, sum)
+        return res[0]
+
+    def numTrees(self, n: int) -> int:
+        pass
+
 
 def main():
     """
@@ -180,7 +222,7 @@ def main():
     p.left.right = TreeNode(0)
     p.right.right = TreeNode(30)
     sol = Solution()
-    print(sol.inorderTraversalNonRecursive(p))
+    print(sol.pathSum(p, 0))
 
 
 if __name__ == '__main__':
