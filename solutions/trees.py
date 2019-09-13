@@ -203,9 +203,54 @@ class Solution:
         helper2(root, sum)
         return res[0]
 
-    def numTrees(self, n: int) -> int:
-        pass
+    def invertTree(self, root: TreeNode) -> TreeNode:
+        if root is None:
+            return None
+        invert_root = TreeNode(root.val)
+        self.mirror_nodes(root, invert_root)
+        return invert_root
 
+    def mirror_nodes(self, root: TreeNode, invert_root: TreeNode):
+        if root.left is not None:
+            invert_root.right = TreeNode(root.left.val)
+            self.mirror_nodes(root.left, invert_root.right)
+        if root.right is not None:
+            invert_root.left = TreeNode(root.right.val)
+            self.mirror_nodes(root.right, invert_root.left)
+
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if root is None:
+            return None
+        if p.val <= root.val <= q.val or q.val <= root.val <= p.val:
+            return root
+        if root.val > q.val:
+            return self.lowestCommonAncestor(root.left, p, q)
+        return self.lowestCommonAncestor(root.right, p, q)
+
+    def binaryTreePaths(self, root: TreeNode) -> List[str]:
+        def helper(node: TreeNode, cur_path: List[int]):
+            if node.left is None and node.right is None:
+                cur_path_str = "->".join(str(x) for x in cur_path + [node.val])
+                res.append(cur_path_str)
+            if node.left is not None:
+                helper(node.left, cur_path + [node.val])
+            if node.right is not None:
+                helper(node.right, cur_path + [node.val])
+        res = []
+        if root is not None:
+            helper(root, [])
+        return res
+
+    def sumOfLeftLeaves(self, root: TreeNode) -> int:
+        if root is None:
+            return 0
+        left_val = 0
+        if root.left is not None and root.left.left is None and root.left.right is None:
+            left_val = root.left.val
+        return left_val + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)
+
+    def sumNumbers(self, root: TreeNode) -> int:
+        pass
 
 def main():
     """
@@ -222,7 +267,7 @@ def main():
     p.left.right = TreeNode(0)
     p.right.right = TreeNode(30)
     sol = Solution()
-    print(sol.pathSum(p, 0))
+    print(sol.binaryTreePaths(p))
 
 
 if __name__ == '__main__':
