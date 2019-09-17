@@ -106,10 +106,23 @@ class Solution:
             res += str(cur_count) + str(cur_digit)
             return res
 
+    def rob(self, nums: List[int]) -> int:
+        if nums is None or len(nums) == 0:
+            return 0
+        if len(nums) == 1:
+            return nums[0]
+        n = len(nums)
+        max_robs = [0] * n
+        max_robs[0] = nums[0]
+        max_robs[1] = max(nums[0], nums[1])
+        for i in range(2, n):
+            max_robs[i] = max(nums[i] + max_robs[i - 2], max_robs[i - 1])
+        return max_robs[n - 1]
+
 
 
 def main():
-    print(Solution().countAndSay(4))
+    print(Solution().rob([0]))
 
 if __name__ == "__main__":
     main()

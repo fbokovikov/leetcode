@@ -1,5 +1,5 @@
 from queue import Queue
-from typing import List, Callable
+from typing import List, Callable, Dict
 from collections import deque
 
 
@@ -250,24 +250,105 @@ class Solution:
         return left_val + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)
 
     def sumNumbers(self, root: TreeNode) -> int:
-        pass
+        def helper(node: TreeNode, cur_sum: int):
+            if node is None:
+                return
+            if node.left is None and node.right is None:
+                res[0] += cur_sum + node.val
+            cur_sum += node.val
+            helper(node.left, cur_sum * 10)
+            helper(node.right, cur_sum * 10)
+
+        res = [0]
+        helper(root, 0)
+        return res[0]
+
+    def numTrees(self, n: int) -> int:
+        num_trees = [0] * (n + 1)
+        num_trees[0], num_trees[1] = 1, 1
+        for i in range(2, n + 1):
+            for j in range(0, i):
+                num_trees[i] += num_trees[j] * num_trees[i - j - 1]
+        return num_trees[n]
+
+    def generateTrees(self, n: int) -> List[TreeNode]:
+        return self.constructTrees(1, n)
+
+    def findMode(self, root: TreeNode) -> List[int]:
+        nodes_dict = {}
+
+        def dfs(node: TreeNode):
+            if node is None:
+                return
+            if node.val not in nodes_dict:
+                nodes_dict[node.val] = 1
+            else:
+                nodes_dict[node.val] += 1
+            dfs(node.left)
+            dfs(node.right)
+
+        max_value = 0
+        res = []
+        dfs(root)
+        for node_value in nodes_dict.keys():
+            if nodes_dict[node_value] == max_value:
+                res.append(node_value)
+            if nodes_dict[node_value] > max_value:
+                res = [node_value]
+                max_value = nodes_dict[node_value]
+        return res
+
+    def constructTrees(self, start, end):
+
+        list = []
+
+        """ if start > end then subtree will be  
+            empty so returning None in the list """
+        if (start > end):
+            list.append(None)
+            return list
+
+        """ iterating through all values from  
+            start to end for constructing 
+            left and right subtree recursively """
+        for i in range(start, end + 1):
+
+            """ constructing left subtree """
+            leftSubtree = self.constructTrees(start, i - 1)
+
+            """ constructing right subtree """
+            rightSubtree = self.constructTrees(i + 1, end)
+
+            """ now looping through all left and  
+                right subtrees and connecting  
+                them to ith root below """
+            for j in range(len(leftSubtree)):
+                left = leftSubtree[j]
+                for k in range(len(rightSubtree)):
+                    right = rightSubtree[k]
+                    node = TreeNode(i)  # making value i as root
+                    node.left = left  # connect left subtree
+                    node.right = right  # connect right subtree
+                    list.append(node)  # add this tree to list
+        return list
+
+
 
 def main():
     """
         3
        /\
-      -1 20
+      1 2
      /\  \
-    -2 0   30
+    2 0   3
     """
-    p = TreeNode(3)
-    p.left = TreeNode(-1)
-    p.right = TreeNode(20)
-    p.left.left = TreeNode(-2)
-    p.left.right = TreeNode(0)
-    p.right.right = TreeNode(30)
+    p = TreeNode(1)
+    p.left = TreeNode(4)
+    p.right = TreeNode(5)
+    p.left.left = TreeNode(4)
+    p.left.left.left = TreeNode(5)
     sol = Solution()
-    print(sol.binaryTreePaths(p))
+    print(sol.findMode(p))
 
 
 if __name__ == '__main__':

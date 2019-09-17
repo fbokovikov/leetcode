@@ -46,3 +46,10 @@ print(ar[-1])
 
 for j in range(2, 3):
     print(j)
+
+
+nums = list(range(1, 10))
+print(nums)
+
+for i in range(10, 11):
+    print(i)
