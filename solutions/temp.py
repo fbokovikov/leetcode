@@ -56,3 +56,15 @@ for i in range(10, 11):
 
 
 print(6 ** 5)
+
+matrix = [[0] * 5]*5
+print(matrix)
+matrix[0][0] = 1
+print(matrix)
+
+m1 = [[0] * 5 for _ in range(5)]
+print(m1)
+m1[0][0] = 1
+print(m1)
+
+print([0] * 5)

@@ -47,7 +47,7 @@ class Solution():
 
 def main():
     sol = Solution()
-    print(sol.combinations(4))
+    print(sol.combinations(280))
 
 
 

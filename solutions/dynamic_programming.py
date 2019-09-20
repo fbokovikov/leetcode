@@ -39,10 +39,60 @@ class Solution:
             res = max(res, price - cur_min)
         return res
 
+    def uniquePaths(self, m: int, n: int) -> int:
+        computed_paths = [[0] * n] * m
+        for i in range(m):
+            computed_paths[i][0] = 1
+        for j in range(n):
+            computed_paths[0][j] = 1
+        for i in range(1, m):
+            for j in range(1, n):
+                computed_paths[i][j] = computed_paths[i - 1][j] + computed_paths[i][j - 1]
+        return computed_paths[m - 1][n - 1]
+
+    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+        n = len(obstacleGrid[0])
+        m = len(obstacleGrid)
+        computed_paths = [[0 for _ in range(n)] for _ in range(m)]
+        for j in range(0, n):
+            if obstacleGrid[0][j] == 1:
+                break
+            computed_paths[0][j] = 1
+        for i in range(0, m):
+            if obstacleGrid[i][0] == 1:
+                break
+            computed_paths[i][0] = 1
+        for i in range(1, m):
+            for j in range(1, n):
+                if obstacleGrid[i][j] == 1:
+                    continue
+                else:
+                    computed_paths[i][j] = computed_paths[i - 1][j] + computed_paths[i][j - 1]
+        return computed_paths[m - 1][n - 1]
+
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        N = len(grid[0])
+        M = len(grid)
+        computed_paths = [[0] * N for _ in range(M)]
+        computed_paths[0][0] = grid[0][0]
+        for i in range(1, M):
+            computed_paths[i][0] = computed_paths[i - 1][0] + grid[i][0]
+        for j in range(1, N):
+            computed_paths[0][j] = computed_paths[0][j - 1] + grid[0][j]
+        for i in range(1, M):
+            for j in range(1, N):
+                computed_paths[i][j] = min(computed_paths[i - 1][j], computed_paths[i][j - 1]) + grid[i][j]
+        return computed_paths[M - 1][N - 1]
+
 
 def main():
+    grid = [
+      [1,3,1],
+      [1,5,1],
+      [4,2,1]
+    ]
     sol = Solution()
-    print(sol.climbStairs(1))
+    print(sol.minPathSum(grid))
 
 
 if __name__ == '__main__':
