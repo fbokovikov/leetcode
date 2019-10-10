@@ -106,6 +106,32 @@ class Solution:
             res += str(cur_count) + str(cur_digit)
             return res
 
+    def lengthOfLastWord(self, s: str) -> int:
+        if s is None:
+            return 0
+        prev_length, cur_length = 0,0
+        for char in s:
+            if char == ' ':
+                if cur_length > 0:
+                    prev_length = cur_length
+                cur_length = 0
+            else:
+                cur_length += 1
+        return cur_length if cur_length > 0 else prev_length
+
+    def plusOne(self, digits: List[int]) -> List[int]:
+        n = len(digits)
+        offset = 0
+        for idx in range(n - 1, -1, -1):
+            if digits[idx] + offset < 9:
+                digits[idx] += 1
+                break
+            else:
+                digits[idx] = 0
+        if digits[0] == 0:
+            digits.insert(0, 1)
+        return digits
+
 
 def main():
     print(Solution().rob([0]))

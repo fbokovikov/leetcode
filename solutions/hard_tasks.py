@@ -24,13 +24,32 @@ class Solution:
             i += 1
         return j
 
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        position = 0
+        while position < len(intervals):
+            if intervals[position][0] > newInterval[0]:
+                break
+            position += 1
+        intervals.insert(position, newInterval)
+        res = []
+        cur_interval = intervals[0]
+        for interval in intervals:
+            if interval[0] <= cur_interval[1]:
+                cur_interval[1] = max(cur_interval[1], interval[1])
+            else:
+                res.append(cur_interval)
+                cur_interval = interval
+        res.append(cur_interval)
+        return res
+
 
 def main():
     sol = Solution()
     nums2 = [2, 1,0]
     nums3 = [7, 8, 9, 11, 12]
-    print(sol.firstMissingPositive(nums2))
-    print(sol.firstMissingPositive(nums3))
+    intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]]
+    new_interval = [4,8]
+    print(sol.insert(intervals, new_interval))
 
 
 if __name__ == '__main__':

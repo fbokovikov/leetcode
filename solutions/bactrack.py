@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Set
 
 
 class Solution:
@@ -77,16 +77,46 @@ class Solution:
 
         return _letterCombinations(digits)
 
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        def backtrack(cur_seq: List[int], res: List[List[int]], max):
+            if len(cur_seq) == k:
+                res.append(cur_seq)
+            else:
+                for i in range(max + 1, n + 1):
+                    backtrack(cur_seq + [i], res, i)
+        res = []
+        for i in range(1, n - k + 2):
+            backtrack([i], res, i)
+        return res
+
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(cur_path: List[int], start_pos, res):
+            res.append(cur_path)
+            for i in range(start_pos, len(nums)):
+                backtrack(cur_path + [nums[i]], i + 1, res)
+        res = []
+        backtrack([], 0, res)
+        return res
+
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(subset: List[int], from_pos: int, res: List[List[int]]):
+            res.append(subset)
+            for i in range(from_pos, len(nums)):
+                if i > from_pos and nums[i] == nums[i - 1]:
+                    continue
+                backtrack(subset + [nums[i]], i + 1, res)
+        nums.sort()
+        res = []
+        backtrack([], 0, res)
+        return res
+
+
+
 
 def main():
-    candidates = [10, 1, 2, 7, 6, 1, 5]
-    target = 8
     sol = Solution()
-    print(sol.combinationSum2(candidates, target))
-
-    candidates = [2, 5, 2, 1, 2]
-    target = 5
-    print(sol.combinationSum2(candidates, target))
+    nums = [1, 2, 3]
+    print(sol.subsets(nums))
 
 
 if __name__ == '__main__':

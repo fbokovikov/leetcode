@@ -171,6 +171,75 @@ class Solution:
                 matrix[N - i][N - i - j] = matrix[i + j][N - i]
                 matrix[i + j][N - i] = buf
 
+    def myPow(self, x: float, n: int) -> float:
+        if n > 0:
+            ans = x
+        elif n < 0:
+            ans, n = 1 / x, -n
+        else:
+            return 1
+        stack = []
+        while n > 1:
+            if n % 2 == 1:
+                stack.append(ans)
+            n = n // 2
+            ans = ans * ans
+        while stack:
+            tmp = stack.pop()
+            ans = ans * tmp
+        return ans
+
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        if intervals is None or len(intervals) == 0:
+            return []
+        n = len(intervals)
+        res, cur_interval = [], intervals[0]
+        for i in range(n):
+            if cur_interval[0] <= intervals[i][0] <= cur_interval[1]:
+                cur_interval[1] = max(cur_interval[1], intervals[i][1])
+            else:
+                res.append(cur_interval)
+                cur_interval = intervals[i]
+        res.append(cur_interval)
+        return res
+
+    def sortColors(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        if nums is None:
+            return
+        colors =  {
+            0: 0,
+            1: 0,
+            2: 0
+        }
+        for num in nums:
+            colors[num] += 1
+        cur_pos = 0
+        for color in (0, 1, 2):
+            for i in range(cur_pos, cur_pos + colors[color]):
+                nums[i] = color
+            cur_pos += colors[color]
+
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        if matrix is None:
+            return
+        m = len(matrix)
+        n = len(matrix[0])
+        zero_rows, zero_columns = [-1] * m, [-1] * n
+        for i in range(0, m):
+            for j in range(0, n):
+                if matrix[i][j] == 0:
+                    zero_rows[i] = 0
+                    zero_columns[j] = 0
+        for i in range(0, m):
+            for j in range(0, n):
+                if zero_rows[i] == 0 or zero_columns[j] == 0:
+                    matrix[i][j] = 0
 
 
 
@@ -185,9 +254,10 @@ def main():
         [4,5,6],
         [7,8,9]
     ]
-    sol.rotate(matrix)
-    for row in matrix:
-        print(row)
+    intervals = [[1,3],[2,6],[8,10],[15,18]]
+    colors = [2,0,2,1,1,0]
+    res = sol.sortColors(colors)
+    print(colors)
 
 
 if __name__ == '__main__':

@@ -84,15 +84,150 @@ class Solution:
                 computed_paths[i][j] = min(computed_paths[i - 1][j], computed_paths[i][j - 1]) + grid[i][j]
         return computed_paths[M - 1][N - 1]
 
+    def numDecodings(self, s: str) -> int:
+        if not s or len(s) == 0:
+            return 0
+        n = len(s)
+        decodings = [0] * (n + 1)
+        decodings[0] = 1
+        decodings[1] = 1 if int(s[0]) > 0 else 0
+        for i in range(2, n + 1):
+            first = int(s[i - 1])
+            if first > 0:
+                decodings[i] = decodings[i - 1]
+            second = int(s[i - 2:i])
+            if 10 <= second <= 26:
+                decodings[i] += decodings[i - 2]
+        return decodings[n]
+
+    def minCostClimbingStairs(self, cost: List[int]) -> int:
+        if not cost or len(cost) == 0:
+            return 0
+        n = len(cost)
+        res = [0] * n
+        res[0] = cost[0]
+        res[1] = cost[1]
+        for i in range(2, n):
+            res[i] = min(res[i - 1], res[i - 2]) + cost[i]
+        return min(res[n - 1], res[n - 2])
+
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        pass
+
+    def jump(self, nums: List[int]) -> int:
+        n = len(nums)
+        jumps = [0] * n
+        for i in range(1, min(nums[0] + 1, n)):
+            jumps[i] = 1
+        for i in range(1, n):
+            prev_jump = nums[i - 1]
+            for j in range(i + prev_jump, min(i + nums[i] + 1, n)):
+                if jumps[j] == 0:
+                    jumps[j] = jumps[i] + 1
+                else:
+                    jumps[j] = min(jumps[j], jumps[i] + 1)
+        return jumps[n - 1]
+
+    def canJump(self, nums: List[int]) -> bool:
+        n = len(nums)
+        last_position = n - 1
+        for i in range(n - 1, -1, -1):
+            if nums[i] >= last_position - i:
+                last_position = i
+        return last_position == 0
+
+    def trap(self, height: List[int]) -> int:
+        if height is None or len(height) == 0:
+            return 0
+        n = len(height)
+        total_water, cur_water = 0, 0
+        cur_height = height[0]
+        for i in range(0, n):
+            if height[i] < cur_height:
+                cur_water += cur_height - height[i]
+            else:
+                total_water += cur_water
+                cur_water = 0
+                cur_height = height[i]
+            if i == n - 1:
+                min_height = min(cur_height, height[n - 1])
+                while height[i] != cur_height:
+                    if height[i] < min_height:
+                        total_water += min_height - height[i]
+                    else:
+                        min_height = height[i]
+                    i -= 1
+        return total_water
+
+    def longestValidParentheses(self, s: str) -> int:
+        if s is None or len(s) == 0:
+            return 0
+        n = len(s)
+        valids = [0] * n
+        for i in range(1, n):
+            if s[i] == '(':
+                continue
+            if s[i - 1] == '(':
+                valids[i] = 2
+                if i >= 2:
+                    valids[i] += valids[i - 2]
+            if s[i - 1] == ')':
+                prev_length = valids[i - 1]
+                if prev_length > 0 and i - prev_length > 0:
+                    if s[i - prev_length - 1] == '(':
+                        valids[i] = 2 + prev_length + valids[i - prev_length - 2]
+        return max(valids)
+
+    def isMatch(self, s: str, p: str) -> bool:
+        """
+        '.' Matches any single character.
+        '*' Matches zero or more of the preceding element.
+        """
+        def is_match(self, text, pattern):
+            if not pattern:
+                return not text
+
+            first_match = bool(text) and pattern[0] in {text[0], '.'}
+
+            if len(pattern) >= 2 and pattern[1] == '*':
+                return (self.isMatch(text, pattern[2:]) or
+                        first_match and self.isMatch(text[1:], pattern))
+            else:
+                return first_match and self.isMatch(text[1:], pattern[1:])
+
+        def isMatch(self, text, pattern):
+            memo = {}
+
+            def dp(i, j):
+                if (i, j) not in memo:
+                    if j == len(pattern):
+                        ans = i == len(text)
+                    else:
+                        first_match = i < len(text) and pattern[j] in {text[i], '.'}
+                        if j + 1 < len(pattern) and pattern[j + 1] == '*':
+                            ans = dp(i, j + 2) or first_match and dp(i + 1, j)
+                        else:
+                            ans = first_match and dp(i + 1, j + 1)
+
+                    memo[i, j] = ans
+                return memo[i, j]
+
+            return dp(0, 0)
+
+        def minDistance(self, word1: str, word2: str) -> int:
+            pass
 
 def main():
-    grid = [
-      [1,3,1],
-      [1,5,1],
-      [4,2,1]
+    triangle = [
+         [2],
+        [3,4],
+       [6,5,7],
+      [4,1,8,3]
     ]
+    s = "()))()()))((()))"
+    heights = [0,1,0,2,1,0,1,3,2,1,2,1]
     sol = Solution()
-    print(sol.minPathSum(grid))
+    print(sol.longestValidParentheses(s))
 
 
 if __name__ == '__main__':
