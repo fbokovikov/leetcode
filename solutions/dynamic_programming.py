@@ -214,8 +214,35 @@ class Solution:
 
             return dp(0, 0)
 
-        def minDistance(self, word1: str, word2: str) -> int:
-            pass
+    def minDistance(self, word1: str, word2: str) -> int:
+        def editDistance(word1, word2, m, n) -> int:
+            if m == 0:
+                return n
+            if n == 0:
+                return m
+            if word1[m - 1] == word2[n - 1]:
+                return editDistance(word1, word2, m - 1, n - 1)
+            return 1 + min(
+                editDistance(word1, word2, m, n - 1), #Insert
+                editDistance(word1, word2, m - 1, n), #Remove
+                editDistance(word1, word2, m - 1, n - 1), #Replace
+             )
+        m = len(word1)
+        n = len(word2)
+        dp = [[0 for _ in range(n + 1)] for _ in range(m + 1)]
+        for i in range(m + 1):
+            for j in range(n + 1):
+                if i == 0:
+                    dp[i][j] = j
+                elif j == 0:
+                    dp[i][j] = i
+                elif word1[i - 1] == word2[j - 1]:
+                    dp[i][j] = dp[i - 1][j - 1]
+                else:
+                    dp[i][j] = 1 + min(dp[i][j - 1],  # Insert
+                                       dp[i - 1][j],  # Remove
+                                       dp[i - 1][j - 1]) #Replace
+        return dp[m][n]
 
 def main():
     triangle = [
@@ -227,7 +254,7 @@ def main():
     s = "()))()()))((()))"
     heights = [0,1,0,2,1,0,1,3,2,1,2,1]
     sol = Solution()
-    print(sol.longestValidParentheses(s))
+    print(sol.minDistance("sol", "rost"))
 
 
 if __name__ == '__main__':
